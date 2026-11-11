@@ -16,6 +16,7 @@
 - Docker Build Context Directory: `.`
 - Instance Type: Free
 - Health Check Path: `/`
+- 자동 배포: `main`에 push하면 배포된다. jms0326 계정에 Render GitHub 앱이 설치돼 있어야 한다(이 저장소만 허용)
 
 ## 환경변수
 
