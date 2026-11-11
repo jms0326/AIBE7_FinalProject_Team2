@@ -60,6 +60,20 @@ class S3FileStorageTest {
 	}
 
 	@Test
+	@DisplayName("공개 주소 앞부분이 있으면(S3 호환 저장소) 그 주소 + 실제 키로 공개 URL을 만든다")
+	void upload_withPublicBaseUrl_usesConfiguredBase() {
+		S3Properties properties = new S3Properties("my-bucket", "local", "https://ref.storage.supabase.co/storage/v1/s3",
+			"https://ref.supabase.co/storage/v1/object/public/my-bucket/");
+		S3FileStorage storage = new S3FileStorage(s3Client, properties);
+
+		FileStorage.UploadedFile result = storage.upload(new byte[] {1}, "case-photos/case-1/a.jpg", "image/jpeg");
+
+		assertThat(result.key()).isEqualTo("case-photos/case-1/a.jpg");
+		assertThat(result.url())
+			.isEqualTo("https://ref.supabase.co/storage/v1/object/public/my-bucket/local/case-photos/case-1/a.jpg");
+	}
+
+	@Test
 	@DisplayName("버킷 설정이 없으면 꺼져 있고, 업로드를 거절한다")
 	void noBucket_isDisabled() {
 		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("", ""));

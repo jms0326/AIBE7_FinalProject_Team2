@@ -1,4 +1,4 @@
 [submodule "backend/private-seed"]
 	path = backend/private-seed
-	url = https://github.com/peanutboi710/NaeLawNamBul_private.git
+	url = https://github.com/jms0326/NaeLawNamBul_private.git
 	branch = develop

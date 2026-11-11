@@ -145,6 +145,9 @@ cloud:
     s3:
       bucket: ${S3_BUCKET_NAME:}
       dir-prefix: ${S3_DIR_PREFIX:}
+      # S3 호환 저장소(Supabase Storage 등)를 쓸 때만 넣는다. 비어 있으면 AWS S3 (S3Properties 참고)
+      endpoint: ${S3_ENDPOINT:}
+      public-base-url: ${S3_PUBLIC_BASE_URL:}
 
 # Redis (확장 단계, BE-61 · WBS 7.1.4). 정책은 기술 스택 2장 "Redis 운영 구성"
 # 논리 DB를 용도별로 나눈다 — 캐시(0)는 지워져도 되고, 토큰(1)은 지워지면 안 된다

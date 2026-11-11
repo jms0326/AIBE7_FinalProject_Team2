@@ -38,11 +38,19 @@ public class S3FileStorage implements FileStorage {
 				.contentLength((long) data.length)
 				.build();
 			s3Client.putObject(request, RequestBody.fromBytes(data));
-			URL url = s3Client.utilities()
-				.getUrl(GetUrlRequest.builder().bucket(properties.bucket()).key(resolvedKey).build());
-			return new UploadedFile(key, url.toString());
+			return new UploadedFile(key, publicUrl(resolvedKey));
 		} catch (SdkException e) {
 			throw new FileStorageException("파일 업로드에 실패했습니다", e);
 		}
+	}
+
+	/** 공개 주소 앞부분이 있으면(S3 호환 저장소) 그것으로, 없으면 SDK가 만드는 S3 주소로 만든다 */
+	private String publicUrl(String resolvedKey) {
+		if (properties.hasPublicBaseUrl()) {
+			return properties.publicUrl(resolvedKey);
+		}
+		URL url = s3Client.utilities()
+			.getUrl(GetUrlRequest.builder().bucket(properties.bucket()).key(resolvedKey).build());
+		return url.toString();
 	}
 }
