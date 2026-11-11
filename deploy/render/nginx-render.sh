@@ -35,9 +35,13 @@ sed -i 's/map $scheme $hsts_header {/map $render_proto $hsts_header {/' "$CONF"
 # 백엔드에는 Render 포트(10000)가 아니라 공개 포트(443)를 알린다
 sed -i 's/proxy_set_header X-Forwarded-Port $server_port;/proxy_set_header X-Forwarded-Port 443;/' "$PROXY"
 
-# 4) Let's Encrypt 경로는 쓰지 않는다 (Render가 인증서를 관리)
+# 4) 사진은 S3가 아니라 Supabase Storage에서 받는다 → CSP img-src의 S3 도메인을 바꾼다
+sed -i 's#https://\*\.s3\.ap-northeast-2\.amazonaws\.com#https://*.supabase.co#g' /etc/nginx/snippets/security-headers.conf
+
+# 5) Let's Encrypt 경로는 쓰지 않는다 (Render가 인증서를 관리)
 sed -i '\#include /etc/nginx/snippets/acme-challenge.conf;#d' "$CONF"
 
 grep -q 'listen 10000' "$CONF"
 grep -q '127.0.0.1:8080' "$APP"
 grep -q 'render_proto' "$PROXY"
+grep -q 'supabase.co' /etc/nginx/snippets/security-headers.conf
