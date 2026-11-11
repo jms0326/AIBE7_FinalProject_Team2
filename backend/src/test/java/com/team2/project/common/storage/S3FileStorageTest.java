@@ -32,7 +32,7 @@ class S3FileStorageTest {
 	@Test
 	@DisplayName("버킷에 올리고, 키와 공개 URL을 돌려준다")
 	void upload_putsObjectAndReturnsUrl() {
-		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", ""));
+		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", "", "", ""));
 
 		FileStorage.UploadedFile result = storage.upload(new byte[] {1, 2, 3}, "case-photos/case-1/a.jpg", "image/jpeg");
 
@@ -48,7 +48,7 @@ class S3FileStorageTest {
 	@Test
 	@DisplayName("dirPrefix가 있으면 실제 S3 키 앞에 붙이지만, 돌려주는 key는 호출한 쪽이 넘긴 값 그대로다")
 	void upload_withDirPrefix_prependsOnlyForS3Key() {
-		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", "local"));
+		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", "local", "", ""));
 
 		FileStorage.UploadedFile result = storage.upload(new byte[] {1}, "case-photos/case-1/a.jpg", "image/jpeg");
 
@@ -76,7 +76,7 @@ class S3FileStorageTest {
 	@Test
 	@DisplayName("버킷 설정이 없으면 꺼져 있고, 업로드를 거절한다")
 	void noBucket_isDisabled() {
-		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("", ""));
+		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("", "", "", ""));
 
 		assertThat(storage.enabled()).isFalse();
 		assertThatThrownBy(() -> storage.upload(new byte[] {1}, "key", "image/jpeg"))
@@ -87,7 +87,7 @@ class S3FileStorageTest {
 	@Test
 	@DisplayName("키가 비어 있으면 거절한다")
 	void blankKey_isRejected() {
-		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", ""));
+		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", "", "", ""));
 
 		assertThatThrownBy(() -> storage.upload(new byte[] {1}, " ", "image/jpeg"))
 			.isInstanceOf(FileStorageException.class)
@@ -99,7 +99,7 @@ class S3FileStorageTest {
 	void sdkException_isWrapped() {
 		when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class)))
 			.thenThrow(SdkException.create("boom", null));
-		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", ""));
+		S3FileStorage storage = new S3FileStorage(s3Client, new S3Properties("my-bucket", "", "", ""));
 
 		assertThatThrownBy(() -> storage.upload(new byte[] {1}, "key", "image/jpeg"))
 			.isInstanceOf(FileStorageException.class)

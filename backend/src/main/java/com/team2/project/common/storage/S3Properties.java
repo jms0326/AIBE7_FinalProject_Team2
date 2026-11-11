@@ -19,11 +19,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record S3Properties(String bucket, @DefaultValue("") String dirPrefix, @DefaultValue("") String endpoint,
 		@DefaultValue("") String publicBaseUrl) {
 
-	/** AWS S3만 쓰던 기존 생성자. S3 호환 저장소 설정 없이 만든다 */
-	public S3Properties(String bucket, String dirPrefix) {
-		this(bucket, dirPrefix, "", "");
-	}
-
 	public boolean enabled() {
 		return bucket != null && !bucket.isBlank();
 	}
